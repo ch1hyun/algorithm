@@ -96,7 +96,6 @@ int main() {
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             if (board[i][j] && dist[i][j]) {
-                fill(&dist[0][0], &dist[N - 1][N - 1], INF);
                 getBridge(board[i][j], {i, j});
             }
         }
