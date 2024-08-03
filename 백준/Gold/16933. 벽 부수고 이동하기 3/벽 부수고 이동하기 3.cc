@@ -1,71 +1,92 @@
-// https://www.acmicpc.net/problem/16933
-
-#include<iostream>
-#include<tuple>
-#include<queue>
-#include<string>
+#include <bits/stdc++.h>
 using namespace std;
 
-int map[1001][1001];
+#define ll long long
+#define pii pair<int, int>
+#define pll pair<ll, ll>
+#define tiii tuple<int, int, int>
+#define MAX 1000000000
+#define all(x) (x).begin(), (x).end()
+#define mp(x) make_pair(x)
 
-// 11층으로 구성하여, 0층부터 벽을 부술 때마다 층+1씩하여 계산
-int map_check[11][1001][1001]; 
+const int INF = 2100000000;
+const ll llINF = 1e18;
 
-int dx[4] = { -1,1,0,0 };
-int dy[4] = { 0,0,-1,1 };
+string a;
+int n, m, k, board[1001][1001], dist[11][1001][1001];
 
+const int dy[] = {1, -1, 0, 0};
+const int dx[] = {0, 0, 1, -1};
+const int DAY = 0;
+const int NIGHT = 1;
 
-int bfs(int N, int M, int K) {
-	if (N == 1 && M == 1) return 1; // 맵이 1x1일때 조건문
-	queue<tuple<int, int, int, int, int>> Q; //cur_x, cur_y, floor, sun_or_moon, stay
-	Q.push(make_tuple(1, 1, 0, 1, 0)); // (1,1)부터 시작, 낮 = 1, 밤 = -1
-	map_check[0][1][1] = 1; // 0층 (1,1)에서부터 count
+bool rangeIn(int i, int j) {
+    return 0 < i && i <= n && 0 < j && j <= m;
+}
 
-	tuple<int, int, int, int, int> T;
-	int cur_x, cur_y, new_x, new_y, floor, sun_or_moon, stay;
-	while (!Q.empty()) {
-		T = Q.front();
-		Q.pop();
-		tie(cur_x, cur_y, floor, sun_or_moon, stay) = T;
-		for (int i = 0; i < 4; i++) {
-			new_x = cur_x + dx[i];
-			new_y = cur_y + dy[i];
-			if (new_x <1 || new_x >N || new_y < 1 || new_y > M) continue;
-			if (new_x == N && new_y == M) return map_check[floor][cur_x][cur_y] + 1;
-			if (map[new_x][new_y] == 1) { // 벽일 경우
-				if (floor == K) continue; // 이미 벽을 K개만큼 부순 경우
-				if (map_check[floor + 1][new_x][new_y] != 0) continue; // 다음 층에 이미 방문한 경우
-				if (sun_or_moon == 1) { // 낮인 경우
-					map_check[floor + 1][new_x][new_y] = map_check[floor][cur_x][cur_y] + 1 + stay;
-					Q.push({ new_x,new_y,floor + 1, sun_or_moon * -1 , 0});
-				}
-				else  //밤인 경우 
-					Q.push({ cur_x, cur_y, floor, sun_or_moon * -1 , 1});
-			}
-			else { // 벽이 아닐 경우
-				if (map_check[floor][new_x][new_y] != 0) continue;
-				map_check[floor][new_x][new_y] = map_check[floor][cur_x][cur_y] + 1;
-				Q.push({ new_x,new_y,floor, sun_or_moon * -1 , 0});
-			}
-		}
-	}
-	return -1;
+void bfs() {
+    queue<tuple<int, int, int, int, int>> q;
+    q.push({k, 1, 1, DAY, 0});
+    dist[k][1][1] = 1;
+
+    while (!q.empty()) {
+        int curK = get<0>(q.front());
+        int curI = get<1>(q.front());
+        int curJ = get<2>(q.front());
+        int curT = get<3>(q.front());
+        int curS = get<4>(q.front());
+        q.pop();
+
+        for (int z = 0; z < 4; ++z) {
+            int ni = curI + dy[z], nj = curJ + dx[z];
+            if (rangeIn(ni, nj)) {
+                if (board[ni][nj]) {
+                    if (curK && !dist[curK - 1][ni][nj]) {
+                        if (curT == DAY) {
+                            dist[curK - 1][ni][nj] = dist[curK][curI][curJ] + 1 + curS;
+                            q.push({curK - 1, ni, nj, NIGHT, dist[curK - 1][ni][nj]});
+                        } else {
+                            q.push({curK, curI, curJ, DAY, 1});
+                        }
+                    }
+                } else {
+                    if (!dist[curK][ni][nj]) {
+                        dist[curK][ni][nj] = dist[curK][curI][curJ] + 1;
+                        q.push({curK, ni, nj, curT == DAY ? NIGHT : DAY, 0});
+                    }
+                }
+            }
+        }
+    }
 }
 
 int main() {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
+    cin.tie(0);
+    ios::sync_with_stdio(false);
 
-	int N, M, K;
-	cin >> N >> M >> K;
+    cin >> n >> m >> k;
 
-	string s;
+    fill(&dist[0][0][0], &dist[k][n][m + 1], 0);
 
-	for (int i = 1; i <= N; i++) {
-		cin >> s;
-		for (int j = 1; j <= M; j++) map[i][j] = s[j - 1] - '0';
-	}
+    for (int i = 1; i <= n; ++i) {
+        cin >> a;
 
-	cout << bfs(N, M, K);
+        for (int j = 1; j <= m; ++j) {
+            board[i][j] = a[j - 1] - '0';
+        }
+    }
 
+    bfs();
+
+    int mn = INF;
+    for (int i = 0; i <= k; ++i) {
+        if (dist[i][n][m]) {
+            mn = min(mn, dist[i][n][m]);
+        }
+    }
+
+    if (mn == INF) cout << -1;
+    else cout << mn;
+
+    return 0;
 }
