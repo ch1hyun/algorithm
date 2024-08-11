@@ -13,16 +13,17 @@ const int INF = 2100000000;
 const ll llINF = 1e18;
 
 int N, M, c, u, v, d;
-int cost[2501], dist[2501][2501];
+int cost[2501];
+ll dist[2501][2501];
 vector<pii> edge[2501];
 
 void dijkstra() {
     dist[1][cost[1]] = 0;
-    priority_queue<tiii, vector<tiii>, greater<tiii>> pq;
+    priority_queue<tuple<ll, int, int>, vector<tuple<ll, int, int>>, greater<tuple<ll, int, int>>> pq;
     pq.push({dist[1][cost[1]], 1, 1});
 
     while (!pq.empty()) {
-        int curD = get<0>(pq.top());
+        ll curD = get<0>(pq.top());
         int curMNC = get<1>(pq.top());
         int curN = get<2>(pq.top());
         pq.pop();
@@ -48,7 +49,7 @@ int main() {
     cin.tie(0);
     ios::sync_with_stdio(false);
 
-    fill(&dist[0][0], &dist[2500][2501], INF);
+    fill(&dist[0][0], &dist[2500][2501], llINF);
 
     cin >> N >> M;
     for (int i = 1; i <= N; ++i) cin >> cost[i];
@@ -62,9 +63,9 @@ int main() {
 
     dijkstra();
 
-    int mn = INF;
-    for (int i = 0; i <= 2500; ++i) {
-        mn = min(mn, dist[N][i]);
+    ll mn = llINF;
+    for (int i = 1; i <= N; ++i) {
+        mn = min(mn, dist[N][cost[i]]);
     }
     cout << mn;
 
