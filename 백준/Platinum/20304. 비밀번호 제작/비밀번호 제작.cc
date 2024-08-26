@@ -39,16 +39,6 @@ int main() {
             q.push(nxt);
             mx = max(mx, visited[nxt]);
         }
-        // int b = 0;
-        // while (n >= (cur ^ (1 << b))) {
-        //     int nxt = cur ^ (1 << b);
-        //     if (visited[nxt] == -1) {
-        //         visited[nxt] = visited[cur] + 1;
-        //         q.push(nxt);
-        //         mx = max(mx, visited[nxt]);
-        //     }
-        //     ++b;
-        // }
     }
 
     cout << mx;
