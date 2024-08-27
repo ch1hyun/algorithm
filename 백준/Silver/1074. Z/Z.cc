@@ -14,25 +14,15 @@ const ll llINF = 1e18;
 
 int N, r, c;
 
-void findout(int si, int sj, int ei, int ej, int left, int right) {
-    if (si == ei && sj == ej && si == r && sj == c) {
-        cout << left;
-        return;
-    }
+int findout(int n, int r, int c) {
+    if (!n) return 0;
 
-    int diffy = (ei - si + 1) >> 1;
-    int diffx  = (ej - sj + 1) >> 1;
-    int diffn = (right - left + 1) >> 2;
+    int half = 1 << (n - 1);
 
-    if (r < si + diffy && c < sj + diffx) {
-        findout(si, sj, si + diffy - 1, sj + diffx - 1, left, left + diffn - 1);
-    } else if (si + diffy <= r && c < sj + diffx) {
-        findout(si + diffy, sj, ei, sj + diffx - 1, left + diffn * 2, left + diffn * 3 - 1);
-    } else if (r < si + diffy && sj + diffx <= c) {
-        findout(si, sj + diffx, si + diffy - 1, ej, left + diffn, left + diffn * 2 - 1);
-    } else {
-        findout(si + diffy, sj + diffx, ei, ej, left + diffn * 3, right);
-    }
+    if (r < half && c < half) return findout(n - 1, r, c);
+    else if (r < half && half <= c) return half * half + findout(n - 1, r, c - half);
+    else if (half <= r && c < half) return half * half * 2 + findout(n - 1, r - half, c);
+    else return half * half * 3 + findout(n - 1, r - half, c - half);
 }
 
 int main() {
@@ -40,7 +30,7 @@ int main() {
     ios::sync_with_stdio(false);
 
     cin >> N >> r >> c;
-    findout(0, 0, (1 << N) - 1, (1 << N) - 1, 0, (1 << (N << 1)) - 1);
+    cout << findout(N, r, c);
 
     return 0;
 }
