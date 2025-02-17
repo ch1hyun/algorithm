@@ -12,6 +12,7 @@
 class Solution {
 public:
     int mx = -2000000000;
+    map<TreeNode*, int> dist;
     int maxPathSum(TreeNode* root) {
         if (root->left != nullptr) {
             maxPathSum(root->left);
@@ -24,10 +25,12 @@ public:
 
     int check(TreeNode* cur, TreeNode* entryNode) {
         if (cur == nullptr) return -1001;
+        if (dist.find(cur) != dist.end()) return dist[cur];
         int leftSum = check(cur->left, entryNode);
         int rightSum = check(cur->right, entryNode);
 
         int ret = max(cur->val, max(leftSum + cur->val, rightSum + cur->val));
+        dist[cur] = ret;
 
         if (cur == entryNode) {
             return max(ret, leftSum + rightSum + cur->val);
