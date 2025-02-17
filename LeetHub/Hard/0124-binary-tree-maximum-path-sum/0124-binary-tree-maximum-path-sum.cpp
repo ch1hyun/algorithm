@@ -19,15 +19,20 @@ public:
         if (root->right != nullptr) {
             maxPathSum(root->right);
         }
-        mx = max(mx, check(root));
-        return mx;
+        return mx = max(mx, check(root, root));
     }
 
-    int check(TreeNode* cur) {
+    int check(TreeNode* cur, TreeNode* entryNode) {
         if (cur == nullptr) return -1001;
-        int leftSum = check(cur->left);
-        int rightSum = check(cur->right);
+        int leftSum = check(cur->left, entryNode);
+        int rightSum = check(cur->right, entryNode);
 
-        return max(max(cur->val, max(leftSum + cur->val, rightSum + cur->val)), leftSum + rightSum + cur->val);
+        int ret = max(cur->val, max(leftSum + cur->val, rightSum + cur->val));
+
+        if (cur == entryNode) {
+            return max(ret, leftSum + rightSum + cur->val);
+        }
+
+        return ret;
     }
 };
