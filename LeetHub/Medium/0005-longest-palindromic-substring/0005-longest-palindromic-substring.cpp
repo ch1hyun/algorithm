@@ -1,30 +1,24 @@
 class Solution {
 public:
-    bool memo[1000][1000];
     string longestPalindrome(string s) {
-        string ans = "";
-        memset(memo, false, sizeof(memo));
+        int mxLen = 1, start = 0;
 
         for (int i = 0; i < s.length(); ++i) {
-            for (int j = i; j < s.length(); ++j) {
-                int len = j - i + 1;
-                if (isPalindrome(s, i, j) && ans.length() < len) {
-                    ans = s.substr(i, len);
-                } 
-            }
+            getMxPalindromeLen(s, i, i, start, mxLen);
+            getMxPalindromeLen(s, i, i + 1, start, mxLen);
         }
 
-        return ans;
+        return s.substr(start, mxLen);
     }
 
-    bool isPalindrome(string &target, int i, int j) {
-        int ri = i, rj = j;
-
-        while (i <= j) {
-            if (memo[i][j]) return true;
-            if (target[i++] != target[j--]) return false;
+    void getMxPalindromeLen(string &s, int l, int r, int &start, int &mxLen) {
+        while (l >= 0 && r < s.length() && s[l] == s[r]) {
+            --l; ++r;
         }
 
-        return memo[ri][rj] = true;
+        if (r - l - 1 > mxLen) {
+            mxLen = r - l - 1;
+            start = l + 1;
+        }
     }
 };
