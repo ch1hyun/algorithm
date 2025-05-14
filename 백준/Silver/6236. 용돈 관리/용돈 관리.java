@@ -5,9 +5,9 @@ import java.util.Scanner;
 // 에디터 여백에 있는 <icon src="AllIcons.Actions.Execute"/> 아이콘을 클릭하세요.
 class Solution {
     public int solution(int n, int m, int[] money) {
-        int answer = 2000000000;
+        int answer = 1000000000;
 
-        int low = 1, high = 2000000000;
+        int low = 1, high = 1000000000;
 
         while (low <= high) {
             int mid = (low + high) / 2;
