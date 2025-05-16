@@ -7,11 +7,7 @@ class Solution {
         Set<String> parsing = new HashSet<>();
         Arrays.sort(phone_book, Collections.reverseOrder());
         
-        for (int i = 1; i <= phone_book[0].length(); ++i) {
-            parsing.add(phone_book[0].substring(0, i));
-        }
-        
-        for (int i = 1; i < phone_book.length; ++i) {
+        for (int i = 0; i < phone_book.length; ++i) {
             if (parsing.contains(phone_book[i])) {
                 return false;
             }
